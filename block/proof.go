@@ -55,7 +55,8 @@ func combineData(prevHash []byte, data string, nonce, difficulty int) []byte {
 
 func int2Bytes(num int) []byte {
 	buff := new(bytes.Buffer)
-	err := binary.Write(buff, binary.BigEndian, num)
+	newNum := int64(num)
+	err := binary.Write(buff, binary.BigEndian, newNum)
 	if err != nil {
 		log.Panic(err)
 	}
