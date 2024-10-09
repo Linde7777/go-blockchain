@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"go-blockchain/blockchain"
+	"log"
 )
 
 func main() {
@@ -13,10 +13,10 @@ func main() {
 	chain.AddBlock("I am block3")
 
 	for _, block := range chain.Blocks {
-		fmt.Println("---------------------")
-		fmt.Printf("block hash: %x\n", block.Hash)
-		fmt.Printf("previous hash: %x\n", block.PrevHash)
-		fmt.Printf("nonce: %d\n", block.Nonce)
-		fmt.Printf("data: %s\n", block.Data)
+		log.Println("---------------------")
+		log.Printf("block hash: %x\n", block.Hash)
+		log.Printf("previous hash: %x\n", block.PrevHash)
+		log.Printf("nonce: %d\n", block.Nonce)
+		log.Printf("data: %s\n", block.Data)
 	}
 }

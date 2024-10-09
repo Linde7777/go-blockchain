@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"encoding/binary"
-	"fmt"
 	"log"
 	"math"
 	"math/big"
@@ -18,10 +17,10 @@ func Mining(prevHash []byte, data string) (block *Block) {
 
 	nonce := 0
 	var hashInBytes [32]byte
-	fmt.Println("mining...")
+	log.Println("mining...")
 	for nonce < math.MaxInt64 {
 		hashInBytes = sha256.Sum256(combineData(prevHash, data, nonce, difficulty))
-		fmt.Printf("trying nonce: %d, mined hash:\r%x\n", nonce, hashInBytes)
+		log.Printf("trying nonce: %d, mined hash:\r%x\n", nonce, hashInBytes)
 
 		var hashInInt big.Int
 		hashInInt.SetBytes(hashInBytes[:])
