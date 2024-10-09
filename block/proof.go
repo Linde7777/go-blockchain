@@ -17,6 +17,7 @@ func Mining(prevHash []byte, data string) (block *Block) {
 
 	nonce := 0
 	var hashInBytes [32]byte
+	log.Println("-------------")
 	log.Println("mining...")
 	for nonce < math.MaxInt64 {
 		hashInBytes = sha256.Sum256(combineData(prevHash, data, nonce, difficulty))
@@ -27,6 +28,7 @@ func Mining(prevHash []byte, data string) (block *Block) {
 		if hashInInt.Cmp(target) != -1 {
 			nonce += 1
 		} else {
+			log.Println("nonce found!!!")
 			break
 		}
 	}
