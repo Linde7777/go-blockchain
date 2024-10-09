@@ -12,8 +12,8 @@ func NewBlockChain() *BlockChain {
 	}
 }
 
-func (chain *BlockChain) AddBlock(data string) {
+func (chain *BlockChain) AddBlock(coinbase string) {
 	lastBlock := chain.Blocks[len(chain.Blocks)-1]
-	newBlock := block.Mining(lastBlock.Hash, data)
+	newBlock := block.Mining(lastBlock.Hash, coinbase)
 	chain.Blocks = append(chain.Blocks, newBlock)
 }

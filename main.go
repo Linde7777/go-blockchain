@@ -27,6 +27,6 @@ func main() {
 		log.Printf("block hash: %x\n", block.Hash)
 		log.Printf("previous hash: %x\n", block.PrevHash)
 		log.Printf("nonce: %d\n", block.Nonce)
-		log.Printf("data: %s\n", block.Data)
+		log.Printf("data: %s\n", block.Coinbase)
 	}
 }

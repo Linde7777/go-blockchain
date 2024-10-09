@@ -9,18 +9,22 @@ import (
 	"math/big"
 )
 
-const difficulty = 12
+const (
+	difficulty      = 12
+	targetLength    = 256
+	hashBytesLength = 32
+)
 
-func Mining(prevHash []byte, data string) (block *Block) {
+func Mining(prevHash []byte, coinbase string) (block *Block) {
 	one := big.NewInt(1)
-	target := one.Lsh(one, uint(256-difficulty))
+	target := one.Lsh(one, uint(targetLength-difficulty))
 
 	nonce := 0
-	var hashInBytes [32]byte
+	var hashInBytes [hashBytesLength]byte
 	log.Println("-------------")
 	log.Println("mining...")
 	for nonce < math.MaxInt64 {
-		hashInBytes = sha256.Sum256(combineData(prevHash, data, nonce, difficulty))
+		hashInBytes = sha256.Sum256(combineData(prevHash, coinbase, nonce, difficulty))
 		log.Printf("trying nonce: %d, mined hash:\r%x\n", nonce, hashInBytes)
 
 		var hashInInt big.Int
@@ -36,17 +40,17 @@ func Mining(prevHash []byte, data string) (block *Block) {
 	return &Block{
 		Hash:     hashInBytes[:],
 		PrevHash: prevHash,
-		Data:     data,
+		Coinbase: coinbase,
 		Nonce:    nonce,
 	}
 
 }
 
-func combineData(prevHash []byte, data string, nonce, difficulty int) []byte {
+func combineData(prevHash []byte, coinbase string, nonce, difficulty int) []byte {
 	return bytes.Join(
 		[][]byte{
 			prevHash,
-			[]byte(data),
+			[]byte(coinbase),
 			int2Bytes(nonce),
 			int2Bytes(difficulty),
 		},
@@ -55,8 +59,8 @@ func combineData(prevHash []byte, data string, nonce, difficulty int) []byte {
 }
 
 func int2Bytes(num int) []byte {
-	buff := new(bytes.Buffer)
 	newNum := int64(num)
+	buff := new(bytes.Buffer)
 	err := binary.Write(buff, binary.BigEndian, newNum)
 	if err != nil {
 		log.Panic(err)
