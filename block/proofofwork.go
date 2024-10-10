@@ -15,10 +15,9 @@ const (
 	hashBytesLength = 32
 )
 
-func Mining(prevHash []byte, coinbase string) (block *Block) {
-	one := big.NewInt(1)
-	target := one.Lsh(one, uint(targetLength-difficulty))
+var target = big.NewInt(1).Lsh(big.NewInt(1), uint(targetLength-difficulty))
 
+func Mining(prevHash []byte, coinbase string) (block *Block) {
 	nonce := 0
 	var hashInBytes [hashBytesLength]byte
 	log.Println("-------------")
@@ -44,6 +43,13 @@ func Mining(prevHash []byte, coinbase string) (block *Block) {
 		Nonce:    nonce,
 	}
 
+}
+
+func Validate(block *Block) bool {
+	hashInBytes := sha256.Sum256(combineData(block.PrevHash, block.Coinbase, block.Nonce, difficulty))
+	var hashInInt big.Int
+	hashInInt.SetBytes(hashInBytes[:])
+	return hashInInt.Cmp(target) == -1
 }
 
 func combineData(prevHash []byte, coinbase string, nonce, difficulty int) []byte {
