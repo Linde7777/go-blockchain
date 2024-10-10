@@ -8,10 +8,5 @@ type Block struct {
 }
 
 func NewGenesisBlock() *Block {
-	return &Block{
-		Hash:     []byte{},
-		PrevHash: []byte{},
-		Coinbase: "I am Genesis Block",
-		Nonce:    0,
-	}
+	return Mining([]byte{}, "I am Genesis Block")
 }
