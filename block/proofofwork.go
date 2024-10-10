@@ -39,14 +39,14 @@ func Mining(prevHash string, coinbase string) (block *Block) {
 	return &Block{
 		Hash:     string(hashInBytes[:]),
 		PrevHash: prevHash,
-		Coinbase: coinbase,
+		Data:     coinbase,
 		Nonce:    nonce,
 	}
 
 }
 
 func Validate(block *Block) bool {
-	hashInBytes := sha256.Sum256(combineData(block.PrevHash, block.Coinbase, block.Nonce, difficulty))
+	hashInBytes := sha256.Sum256(combineData(block.PrevHash, block.Data, block.Nonce, difficulty))
 	var hashInInt big.Int
 	hashInInt.SetBytes(hashInBytes[:])
 	return hashInInt.Cmp(target) == -1

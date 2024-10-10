@@ -8,7 +8,7 @@ import (
 type Block struct {
 	Hash     string
 	PrevHash string
-	Coinbase string
+	Data     string
 	Nonce    int
 }
 
