@@ -1,17 +1,17 @@
 package block
 
+import (
+	"fmt"
+	"time"
+)
+
 type Block struct {
-	Hash     []byte
-	PrevHash []byte
-	Data     string
+	Hash     string
+	PrevHash string
+	Coinbase string
 	Nonce    int
 }
 
 func NewGenesisBlock() *Block {
-	return &Block{
-		Hash:     []byte{},
-		PrevHash: []byte{},
-		Data:     "I am Genesis Block",
-		Nonce:    0,
-	}
+	return Mining("", fmt.Sprintf("I am Genesis Block, created at %s", time.Now()))
 }
