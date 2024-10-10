@@ -17,13 +17,13 @@ const (
 
 var target = big.NewInt(1).Lsh(big.NewInt(1), uint(targetLength-difficulty))
 
-func Mining(prevHash string, coinbase string) (block *Block) {
+func Mining(prevHash string, data string) (block *Block) {
 	nonce := 0
 	var hashInBytes [hashBytesLength]byte
 	// log.Println("-------------")
 	// log.Println("mining...")
 	for nonce < math.MaxInt64 {
-		hashInBytes = sha256.Sum256(combineData(prevHash, coinbase, nonce, difficulty))
+		hashInBytes = sha256.Sum256(combineBlockFields(prevHash, data, nonce, difficulty))
 		// log.Printf("trying nonce: %d, mined hash:\r%x\n", nonce, hashInBytes)
 
 		var hashInInt big.Int
@@ -39,20 +39,20 @@ func Mining(prevHash string, coinbase string) (block *Block) {
 	return &Block{
 		Hash:     string(hashInBytes[:]),
 		PrevHash: prevHash,
-		Data:     coinbase,
+		Data:     data,
 		Nonce:    nonce,
 	}
 
 }
 
-func Validate(block *Block) bool {
-	hashInBytes := sha256.Sum256(combineData(block.PrevHash, block.Data, block.Nonce, difficulty))
+func (b *Block) Validate() bool {
+	hashInBytes := sha256.Sum256(combineBlockFields(b.PrevHash, b.Data, b.Nonce, difficulty))
 	var hashInInt big.Int
 	hashInInt.SetBytes(hashInBytes[:])
 	return hashInInt.Cmp(target) == -1
 }
 
-func combineData(prevHash string, coinbase string, nonce, difficulty int) []byte {
+func combineBlockFields(prevHash string, coinbase string, nonce, difficulty int) []byte {
 	return bytes.Join(
 		[][]byte{
 			[]byte(prevHash),

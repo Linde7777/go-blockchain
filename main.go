@@ -9,6 +9,7 @@ import (
 	"go-blockchain/utils"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -142,5 +143,6 @@ func showEntireBlockchain(chain *blockchain.BlockChain) {
 		fmt.Printf("Previous Hash: %x\n", block.PrevHash)
 		fmt.Printf("Data: %s\n", block.Data)
 		fmt.Printf("Nonce: %d\n", block.Nonce)
+		fmt.Printf("Proof of Work: %s\n", strconv.FormatBool(block.Validate()))
 	}
 }
