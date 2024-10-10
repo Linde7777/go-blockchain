@@ -1,56 +1,46 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"github.com/dgraph-io/badger"
 	"github.com/go-redis/redis"
-	blockPkg "go-blockchain/block"
 	"go-blockchain/blockchain"
 	"go-blockchain/utils"
 	"log"
 	"os"
-	"strconv"
-	"time"
+	"strings"
 )
 
 func main() {
 	setupLog()
 	defer closeLog()
 
-	db := NewStorage(optionRedis)
+	db := NewBlockChainStorage(optionRedis)
 
 	chain, err := blockchain.NewBlockChain(db)
 	if err != nil {
-		log.Println("Failed to create blockchain:", err)
-		return
-	}
-
-	for i := 0; i < 6; i++ {
-		err = chain.AddBlock(fmt.Sprintf("blocked added at %s", time.Now()))
-		if err != nil {
-			log.Println("Failed to add block:", err)
-			return
-		}
-	}
-
-	lastBlock, err := chain.GetLastBlock()
-	if err != nil {
 		utils.LogPanic(err)
 	}
-	iter := blockchain.NewIterator(db, lastBlock.Hash)
 
-	for iter.HasNext() {
-		b, err := iter.Next()
-		if err != nil {
-			log.Println("Failed to get next block:", err)
+	reader := bufio.NewReader(os.Stdin)
+
+	for {
+		printMenu()
+		choice, _ := reader.ReadString('\n')
+		choice = strings.TrimSpace(choice)
+
+		switch choice {
+		case "1":
+			addBlock(chain, reader)
+		case "2":
+			showEntireBlockchain(chain)
+		case "3":
+			fmt.Println("Exiting...")
 			return
+		default:
+			fmt.Println("Invalid option. Please try again.")
 		}
-		log.Println("---------------------")
-		log.Printf("block hash: %x\n", b.Hash)
-		log.Printf("previous hash: %x\n", b.PrevHash)
-		log.Printf("nonce: %d\n", b.Nonce)
-		log.Printf("data: %s\n", b.Coinbase)
-		log.Printf("proof of work: %s\n", strconv.FormatBool(blockPkg.Validate(b)))
 	}
 }
 
@@ -78,13 +68,13 @@ const (
 	optionRedis    = "redis"
 )
 
-func NewStorage(option string) blockchain.Storage {
+func NewBlockChainStorage(option string) blockchain.Storage {
 	switch option {
 	case optionBadgerDB:
 		badgerDB := NewBadgerDB()
 		return blockchain.NewBadgerDBStorage(badgerDB)
 	case optionRedis:
-		redisDB := NewRedisDB()
+		redisDB := NewRedisClient()
 		return blockchain.NewRedisStorage(redisDB)
 	default:
 		log.Fatal("Invalid storage option")
@@ -104,9 +94,53 @@ func NewBadgerDB() *badger.DB {
 
 const redisAddr = "localhost:6379"
 
-func NewRedisDB() *redis.Client {
+func NewRedisClient() *redis.Client {
 	client := redis.NewClient(&redis.Options{
 		Addr: redisAddr,
 	})
 	return client
+}
+
+func printMenu() {
+	fmt.Println("\n--- Blockchain Menu ---")
+	fmt.Println("1. Add a new block")
+	fmt.Println("2. Show entire blockchain")
+	fmt.Println("3. Exit")
+	fmt.Print("Enter your choice: ")
+}
+
+func addBlock(chain *blockchain.BlockChain, reader *bufio.Reader) {
+	fmt.Print("Enter data for the new block: ")
+	data, _ := reader.ReadString('\n')
+	data = strings.TrimSpace(data)
+
+	err := chain.AddBlock(data)
+	if err != nil {
+		fmt.Println("Error adding block:", err)
+	} else {
+		fmt.Println("Block added successfully!")
+	}
+}
+
+func showEntireBlockchain(chain *blockchain.BlockChain) {
+	lastBlock, err := chain.GetLastBlock()
+	if err != nil {
+		fmt.Println("Error getting last block:", err)
+		return
+	}
+
+	iter := blockchain.NewIterator(chain.DB, lastBlock.Hash)
+
+	for iter.HasNext() {
+		block, err := iter.Next()
+		if err != nil {
+			fmt.Println("Error getting next block:", err)
+			return
+		}
+		fmt.Println("------------------------")
+		fmt.Printf("Hash: %x\n", block.Hash)
+		fmt.Printf("Previous Hash: %x\n", block.PrevHash)
+		fmt.Printf("Data: %s\n", block.Coinbase)
+		fmt.Printf("Nonce: %d\n", block.Nonce)
+	}
 }
