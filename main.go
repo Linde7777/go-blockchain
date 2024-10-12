@@ -19,7 +19,7 @@ func main() {
 
 	db := NewBlockChainStorage(optionRedis)
 
-	chain, err := blockchain.NewBlockChain(db)
+	chain, err := blockchain.NewBlockChain(db, "ArthurMorgan")
 	if err != nil {
 		utils.LogPanic(err)
 	}
@@ -141,7 +141,7 @@ func showEntireBlockchain(chain *blockchain.BlockChain) {
 		fmt.Println("------------------------")
 		fmt.Printf("Hash: %x\n", block.Hash)
 		fmt.Printf("Previous Hash: %x\n", block.PrevHash)
-		fmt.Printf("Data: %s\n", block.Data)
+		fmt.Printf("Transactions: %s\n", block.Transactions)
 		fmt.Printf("Nonce: %d\n", block.Nonce)
 		fmt.Printf("Proof of Work: %s\n", strconv.FormatBool(block.Validate()))
 	}

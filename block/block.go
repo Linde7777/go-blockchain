@@ -1,17 +1,16 @@
 package block
 
 import (
-	"fmt"
-	"time"
+	"go-blockchain/blockchain"
 )
 
 type Block struct {
-	Hash     string
-	PrevHash string
-	Data     string
-	Nonce    int
+	Hash         string
+	PrevHash     string
+	Transactions []*blockchain.Transaction
+	Nonce        int
 }
 
-func NewGenesisBlock() *Block {
-	return Mining("", fmt.Sprintf("I am Genesis Block, created at %s", time.Now()))
+func NewGenesisBlock(txs []*blockchain.Transaction) *Block {
+	return Mining("", txs)
 }
