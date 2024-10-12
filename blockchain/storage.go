@@ -3,20 +3,19 @@ package blockchain
 import (
 	"bytes"
 	"encoding/gob"
-	"go-blockchain/block"
 	"strings"
 )
 
 type Storage interface {
 	Get(key string) (string, error)
-	GetBlock(key string) (*block.Block, error)
+	GetBlock(key string) (*Block, error)
 	Set(key, value string) error
-	SetBlock(key string, value *block.Block) error
+	SetBlock(key string, value *Block) error
 	Delete(key string) error
 	KeyNotFound(err error) bool
 }
 
-func block2Str(b *block.Block) (string, error) {
+func block2Str(b *Block) (string, error) {
 	var res bytes.Buffer
 	encoder := gob.NewEncoder(&res)
 	err := encoder.Encode(b)
@@ -26,8 +25,8 @@ func block2Str(b *block.Block) (string, error) {
 	return res.String(), nil
 }
 
-func str2Block(data string) (*block.Block, error) {
-	var b block.Block
+func str2Block(data string) (*Block, error) {
+	var b Block
 	decoder := gob.NewDecoder(strings.NewReader(data))
 	err := decoder.Decode(&b)
 	if err != nil {
@@ -42,7 +41,7 @@ func str2Block(data string) (*block.Block, error) {
 // It can iterate till the Genesis block.
 type DBIterator interface {
 	HasNext() bool
-	Next() (*block.Block, error)
+	Next() (*Block, error)
 }
 
 type DBIteratorV1 struct {
@@ -64,7 +63,7 @@ func (iter *DBIteratorV1) HasNext() bool {
 	return iter.nextHash != ""
 }
 
-func (iter *DBIteratorV1) Next() (*block.Block, error) {
+func (iter *DBIteratorV1) Next() (*Block, error) {
 	if !iter.HasNext() {
 		return nil, nil
 	}

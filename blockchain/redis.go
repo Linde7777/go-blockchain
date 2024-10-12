@@ -2,7 +2,6 @@ package blockchain
 
 import (
 	"github.com/go-redis/redis"
-	"go-blockchain/block"
 )
 
 // RedisStorage can only be used for debug,
@@ -21,7 +20,7 @@ func (r *RedisStorage) Get(key string) (string, error) {
 	return r.client.Get(key).Result()
 }
 
-func (r *RedisStorage) GetBlock(key string) (*block.Block, error) {
+func (r *RedisStorage) GetBlock(key string) (*Block, error) {
 	serializedBlock, err := r.client.Get(key).Result()
 	if err != nil {
 		return nil, err
@@ -34,7 +33,7 @@ func (r *RedisStorage) Set(key, value string) error {
 	return r.client.Set(key, value, 0).Err()
 }
 
-func (r *RedisStorage) SetBlock(key string, value *block.Block) error {
+func (r *RedisStorage) SetBlock(key string, value *Block) error {
 	serializedBlock, err := block2Str(value)
 	if err != nil {
 		return err
