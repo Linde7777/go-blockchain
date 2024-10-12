@@ -137,7 +137,7 @@ func (chain *BlockChain) FindUnspentTransactions(address string) ([]*Transaction
 	return unspentTxs, nil
 }
 
-func (chain *BlockChain) FindUTXO(address string) ([]TXOutput, error) {
+func (chain *BlockChain) GetUTXO(address string) ([]TXOutput, error) {
 	var utxo []TXOutput
 	unspentTxs, err := chain.FindUnspentTransactions(address)
 	if err != nil {
@@ -149,6 +149,18 @@ func (chain *BlockChain) FindUTXO(address string) ([]TXOutput, error) {
 		}
 	}
 	return utxo, nil
+}
+
+func (chain *BlockChain) GetBalance(address string) (amount int, err error) {
+	utxo, err := chain.GetUTXO(address)
+	if err != nil {
+		return 0, err
+	}
+
+	for _, out := range utxo {
+		amount += out.CoinCount
+	}
+	return amount, nil
 }
 
 var ErrNoSpendableAmount = errors.New("no spendable amount")
