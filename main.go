@@ -37,6 +37,8 @@ func main() {
 		case "2":
 			showEntireBlockchain(chain)
 		case "3":
+			getBalance(chain, reader)
+		case "4":
 			fmt.Println("Exiting...")
 			return
 		default:
@@ -179,4 +181,18 @@ func showEntireBlockchain(chain *blockchain.BlockChain) {
 		fmt.Printf("Nonce: %d\n", block.Nonce)
 		fmt.Printf("Proof of Work: %s\n", strconv.FormatBool(block.Validate()))
 	}
+}
+
+func getBalance(chain *blockchain.BlockChain, reader *bufio.Reader) {
+	fmt.Print("Enter address: ")
+	address, _ := reader.ReadString('\n')
+	address = strings.TrimSpace(address)
+
+	balance, err := chain.GetBalance(address)
+	if err != nil {
+		fmt.Println("Error getting balance:", err)
+		return
+	}
+
+	fmt.Printf("Balance of %s: %d coins\n", address, balance)
 }
