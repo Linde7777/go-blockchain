@@ -170,6 +170,7 @@ var ErrNoSpendableAmount = errors.New("no spendable amount")
 func (chain *BlockChain) FindSpendableOutputs(address string, amount int) (
 	spendableAmount int, unspentOuts map[string][]int, err error) {
 
+	unspentOuts = make(map[string][]int)
 	unspentTxs, err := chain.FindUnspentTransactions(address)
 	if err != nil {
 		return 0, nil, err
