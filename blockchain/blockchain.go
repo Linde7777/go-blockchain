@@ -2,7 +2,6 @@ package blockchain
 
 import (
 	"errors"
-	"go-blockchain/block"
 )
 
 type BlockChain struct {
@@ -32,7 +31,7 @@ func NewBlockChain(db Storage, yourAddress string) (*BlockChain, error) {
 			return nil, err
 		}
 		txs := []*Transaction{tx}
-		genesis := block.NewGenesisBlock(txs)
+		genesis := NewGenesisBlock(txs)
 		err = db.SetBlock(genesis.Hash, genesis)
 		if err != nil {
 			return nil, err
@@ -57,7 +56,7 @@ func (chain *BlockChain) AddBlock(txs []*Transaction) error {
 		return err
 	}
 
-	newBlock := block.Mining(lastBlock.Hash, txs)
+	newBlock := Mining(lastBlock.Hash, txs)
 	err = chain.DB.SetBlock(newBlock.Hash, newBlock)
 	if err != nil {
 		return err
@@ -72,7 +71,7 @@ func (chain *BlockChain) AddBlock(txs []*Transaction) error {
 	return nil
 }
 
-func (chain *BlockChain) GetLastBlock() (*block.Block, error) {
+func (chain *BlockChain) GetLastBlock() (*Block, error) {
 	lastBlockHash, err := chain.GetLastBlockHash()
 	if err != nil {
 		return nil, err
@@ -88,7 +87,7 @@ func (chain *BlockChain) GetLastBlockHash() (string, error) {
 	return lastBlockHash, nil
 }
 
-func (chain *BlockChain) GetBlock(blockHash string) (*block.Block, error) {
+func (chain *BlockChain) GetBlock(blockHash string) (*Block, error) {
 	return chain.DB.GetBlock(blockHash)
 }
 

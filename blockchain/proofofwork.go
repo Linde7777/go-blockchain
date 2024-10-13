@@ -1,10 +1,9 @@
-package block
+package blockchain
 
 import (
 	"bytes"
 	"crypto/sha256"
 	"encoding/binary"
-	"go-blockchain/blockchain"
 	"log"
 	"math"
 	"math/big"
@@ -18,7 +17,7 @@ const (
 
 var target = big.NewInt(1).Lsh(big.NewInt(1), uint(targetLength-difficulty))
 
-func Mining(prevHash string, txs []*blockchain.Transaction) (block *Block) {
+func Mining(prevHash string, txs []*Transaction) (block *Block) {
 	nonce := 0
 	var hashInBytes [hashBytesLength]byte
 	// log.Println("-------------")
@@ -54,7 +53,7 @@ func (b *Block) Validate() bool {
 	return hashInInt.Cmp(target) == -1
 }
 
-func combineBlockFields(prevHash string, txs []*blockchain.Transaction, nonce, difficulty int) []byte {
+func combineBlockFields(prevHash string, txs []*Transaction, nonce, difficulty int) []byte {
 	return bytes.Join(
 		[][]byte{
 			[]byte(prevHash),
@@ -66,7 +65,7 @@ func combineBlockFields(prevHash string, txs []*blockchain.Transaction, nonce, d
 	)
 }
 
-func txs2Bytes(txs []*blockchain.Transaction) []byte {
+func txs2Bytes(txs []*Transaction) []byte {
 	var txHashes [][]byte
 	for _, tx := range txs {
 		txHashes = append(txHashes, []byte(tx.ID))

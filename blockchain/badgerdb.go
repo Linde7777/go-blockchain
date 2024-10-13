@@ -3,7 +3,6 @@ package blockchain
 import (
 	"errors"
 	"github.com/dgraph-io/badger"
-	"go-blockchain/block"
 )
 
 type BadgerDB struct {
@@ -32,7 +31,7 @@ func (b *BadgerDB) Get(key string) (string, error) {
 	return string(data), nil
 }
 
-func (b *BadgerDB) GetBlock(key string) (*block.Block, error) {
+func (b *BadgerDB) GetBlock(key string) (*Block, error) {
 	data, err := b.Get(key)
 	if err != nil {
 		return nil, err
@@ -46,7 +45,7 @@ func (b *BadgerDB) Set(key, value string) error {
 	})
 }
 
-func (b *BadgerDB) SetBlock(key string, block *block.Block) error {
+func (b *BadgerDB) SetBlock(key string, block *Block) error {
 	serBlock, err := block2Str(block)
 	if err != nil {
 		return err
