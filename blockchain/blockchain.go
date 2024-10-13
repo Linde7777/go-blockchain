@@ -13,20 +13,22 @@ const (
 	DBKeyLastBlockHash = "last-block-hash"
 )
 
+const genesisSignature = "genesis signature"
+
 func NewBlockChain(db Storage, yourAddress string) (*BlockChain, error) {
 	chain := &BlockChain{}
 
 	chain.DB = db
 
-	lastBlock, err := chain.GetLastBlock()
+	lastBlockHash, err := chain.GetLastBlockHash()
 	switch {
 	// i.e., a blockchain with existing data is already persistent in the storage
 	case err == nil:
-		chain.LastBlockHash = lastBlock.Hash
+		chain.LastBlockHash = lastBlockHash
 
 	// i.e., there is no blockchain persistent in the storage
 	case db.KeyNotFound(err):
-		tx, err := NewCoinbaseTX(yourAddress, "")
+		tx, err := NewCoinbaseTX(yourAddress, genesisSignature)
 		if err != nil {
 			return nil, err
 		}
