@@ -111,19 +111,6 @@ func printMenu() {
 	fmt.Print("Enter your choice: ")
 }
 
-// func addBlock(chain *blockchain.BlockChain, reader *bufio.Reader) {
-// 	fmt.Print("Enter data for the new block: ")
-// 	data, _ := reader.ReadString('\n')
-// 	data = strings.TrimSpace(data)
-
-// 	err := chain.AddBlock(data)
-// 	if err != nil {
-// 		fmt.Println("Error adding block:", err)
-// 	} else {
-// 		fmt.Println("Block added successfully!")
-// 	}
-// }
-
 func newTransaction(chain *blockchain.BlockChain, reader *bufio.Reader) {
 	fmt.Print("Enter sender: ")
 	sender, _ := reader.ReadString('\n')
