@@ -17,9 +17,11 @@ func main() {
 	setupLog()
 	defer closeLog()
 
-	db := NewBlockChainStorage(optionRedis)
+	LoadConfig()
 
-	chain, err := blockchain.NewBlockChain(db, "ArthurMorgan")
+	db := NewBlockChainStorage(AppConfig.StorageOption)
+
+	chain, err := blockchain.NewBlockChain(db, AppConfig.UserAddress)
 	if err != nil {
 		utils.LogPanic(err)
 	}
@@ -67,7 +69,7 @@ func closeLog() {
 }
 
 const (
-	optionBadgerDB = "badgerDB"
+	optionBadgerDB = "badgerdb"
 	optionRedis    = "redis"
 )
 
@@ -85,21 +87,17 @@ func NewBlockChainStorage(option string) blockchain.Storage {
 	return nil
 }
 
-const badgerDBPath = "/tmp/badger"
-
 func NewBadgerDB() *badger.DB {
-	badgerDB, err := badger.Open(badger.DefaultOptions(badgerDBPath))
+	badgerDB, err := badger.Open(badger.DefaultOptions(AppConfig.BadgerDBPath))
 	if err != nil {
 		log.Fatal(err)
 	}
 	return badgerDB
 }
 
-const redisAddr = "localhost:6379"
-
 func NewRedisClient() *redis.Client {
 	client := redis.NewClient(&redis.Options{
-		Addr: redisAddr,
+		Addr: AppConfig.RedisAddr,
 	})
 	return client
 }
@@ -108,7 +106,8 @@ func printMenu() {
 	fmt.Println("\n--- Blockchain Menu ---")
 	fmt.Println("1. Add a new transaction")
 	fmt.Println("2. Show entire blockchain")
-	fmt.Println("3. Exit")
+	fmt.Println("3. Get balance")
+	fmt.Println("4. Exit")
 	fmt.Print("Enter your choice: ")
 }
 

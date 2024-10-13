@@ -1,0 +1,4 @@
+storage_option: "redis" # "badgerdb" or "redis"
+badger_db_path: "/tmp/badger"
+redis_addr: "localhost:6379"
+user_address: "ArthurMorgan"
