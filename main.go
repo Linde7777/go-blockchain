@@ -3,25 +3,26 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"github.com/dgraph-io/badger"
-	"github.com/go-redis/redis"
 	"go-blockchain/blockchain"
+	"go-blockchain/config"
 	"go-blockchain/utils"
 	"log"
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/redis/go-redis/v9"
 )
 
 func main() {
 	setupLog()
 	defer closeLog()
 
-	LoadConfig()
+	config.LoadConfig()
 
-	db := NewBlockChainStorage(AppConfig.StorageOption)
+	db := NewBlockChainStorage(config.AppConfig.StorageOption)
 
-	chain, err := blockchain.NewBlockChain(db, AppConfig.UserAddress)
+	chain, err := blockchain.NewBlockChain(db, config.AppConfig.UserAddress)
 	if err != nil {
 		utils.LogPanic(err)
 	}
@@ -69,15 +70,15 @@ func closeLog() {
 }
 
 const (
-	optionBadgerDB = "badgerdb"
-	optionRedis    = "redis"
+	// optionBadgerDB = "badgerdb"
+	optionRedis = "redis"
 )
 
 func NewBlockChainStorage(option string) blockchain.Storage {
 	switch option {
-	case optionBadgerDB:
-		badgerDB := NewBadgerDB()
-		return blockchain.NewBadgerDBStorage(badgerDB)
+	// case optionBadgerDB:
+	// 	badgerDB := NewBadgerDB()
+	// 	return blockchain.NewBadgerDBStorage(badgerDB)
 	case optionRedis:
 		redisDB := NewRedisClient()
 		return blockchain.NewRedisStorage(redisDB)
@@ -87,17 +88,9 @@ func NewBlockChainStorage(option string) blockchain.Storage {
 	return nil
 }
 
-func NewBadgerDB() *badger.DB {
-	badgerDB, err := badger.Open(badger.DefaultOptions(AppConfig.BadgerDBPath))
-	if err != nil {
-		log.Fatal(err)
-	}
-	return badgerDB
-}
-
 func NewRedisClient() *redis.Client {
 	client := redis.NewClient(&redis.Options{
-		Addr: AppConfig.RedisAddr,
+		Addr: config.AppConfig.RedisAddr,
 	})
 	return client
 }

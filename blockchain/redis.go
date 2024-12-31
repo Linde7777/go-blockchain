@@ -1,7 +1,9 @@
 package blockchain
 
 import (
-	"github.com/go-redis/redis"
+	"context"
+
+	"github.com/redis/go-redis/v9"
 )
 
 // RedisStorage can only be used for debug,
@@ -17,11 +19,11 @@ func NewRedisStorage(client *redis.Client) *RedisStorage {
 }
 
 func (r *RedisStorage) Get(key string) (string, error) {
-	return r.client.Get(key).Result()
+	return r.client.Get(context.Background(), key).Result()
 }
 
 func (r *RedisStorage) GetBlock(key string) (*Block, error) {
-	serializedBlock, err := r.client.Get(key).Result()
+	serializedBlock, err := r.client.Get(context.Background(), key).Result()
 	if err != nil {
 		return nil, err
 	}
@@ -30,7 +32,7 @@ func (r *RedisStorage) GetBlock(key string) (*Block, error) {
 }
 
 func (r *RedisStorage) Set(key, value string) error {
-	return r.client.Set(key, value, 0).Err()
+	return r.client.Set(context.Background(), key, value, 0).Err()
 }
 
 func (r *RedisStorage) SetBlock(key string, value *Block) error {
@@ -38,11 +40,11 @@ func (r *RedisStorage) SetBlock(key string, value *Block) error {
 	if err != nil {
 		return err
 	}
-	return r.client.Set(key, serializedBlock, 0).Err()
+	return r.client.Set(context.Background(), key, serializedBlock, 0).Err()
 }
 
 func (r *RedisStorage) Delete(key string) error {
-	return r.client.Del(key).Err()
+	return r.client.Del(context.Background(), key).Err()
 }
 
 func (r *RedisStorage) KeyNotFound(err error) bool {
